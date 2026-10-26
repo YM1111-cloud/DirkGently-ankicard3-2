@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>【Dirk Gently】③-2 フラッシュカード</title>
+ <style>
+ body {
+ font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+ background-color: #f7f9fc;
+ color: #333333;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ padding: 20px;
+ margin: 0;
+ }
+
+ h1 {
+ font-size: 1.5rem;
+ color: #2c3e50;
+ margin-bottom: 10px;
+ }
+
+ .header-stats {
+ display: flex;
+ justify-content: space-between;
+ width: 100%;
+ max-width: 600px;
+ margin-bottom: 15px;
+ font-size: 1.1rem;
+ font-weight: bold;
+ color: #555;
+ padding: 0 10px;
+ }
+
+ .top-controls {
+ display: flex;
+ flex-wrap: wrap;
+ justify-content: center;
+ gap: 8px;
+ width: 100%;
+ max-width: 600px;
+ margin-bottom: 20px;
+ }
+
+ .top-btn {
+ flex: 1;
+ min-width: 130px;
+ padding: 10px 12px;
+ font-size: 0.95rem;
+ border: none;
+ border-radius: 8px;
+ cursor: pointer;
+ font-weight: bold;
+ color: white;
+ transition: background-color 0.2s, transform 0.1s;
+ box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+ }
+
+ .top-btn:active { transform: scale(0.98); }
+ 
+.btn-all { background-color: #7f8c8d; }
+ .btn-all:hover { background-color: #6c7a7d; }
+ .btn-unanswered { background-color: #3498db; }
+ .btn-unanswered:hover { background-color: #2980b9; }
+ .btn-review { background-color: #e67e22; }
+ .btn-review:hover { background-color: #d35400; }
+ .btn-incorrect { background-color: #9b59b6; }
+ .btn-incorrect:hover { background-color: #8e44ad; }
+
+ .mode-indicator {
+ font-size: 0.9rem;
+ color: #e67e22;
+ font-weight: bold;
+ margin-bottom: 10px;
+ }
+
+ #flashcard {
+ background-color: #ffffff;
+ width: 100%;
+ max-width: 600px;
+ min-height: 400px;
+ border-radius: 16px;
+ box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+ padding: 30px;
+ box-sizing: border-box;
+ text-align: center;
+ position: relative;
+ }
+
+ #front-side, #back-side {
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+ }
+ 
+#back-side {
+ display: none;
+ text-align: left;
+ align-items: flex-start;
+ }
+
+ .date-badge {
+ font-size: 0.85rem;
+ background-color: #edf2f7;
+ color: #4a5568;
+ padding: 6px 14px;
+ border-radius: 20px;
+ margin-bottom: 5px;
+ font-weight: bold;
+ display: inline-block;
+ }
+
+ .srs-badge {
+ font-size: 0.8rem;
+ color: #e67e22;
+ margin-bottom: 20px;
+ font-weight: bold;
+ }
+
+ .english-text {
+ font-size: 1.4rem;
+ font-weight: bold;
+ color: #1a1a1a;
+ margin-bottom: 25px;
+ line-height: 1.4;
+ text-align: center;
+ }
+
+ .english-text-back {
+ font-size: 1.2rem;
+ font-weight: bold;
+ color: #34495e;
+ margin-bottom: 15px;
+ line-height: 1.4;
+ text-align: left;
+ width: 100%;
+ border-bottom: 2px dashed #e1e8ed;
+ padding-bottom: 15px;
+ }
+
+ .japanese-text {
+ font-size: 1.2rem;
+ font-weight: bold;
+ color: #2c3e50;
+ margin-bottom: 20px;
+ line-height: 1.6;
+ width: 100%;
+ border-bottom: 2px solid #e1e8ed;
+ padding-bottom: 15px;
+ }
+
+ .note-box {
+ background-color: #fff9e6;
+ border-left: 4px solid #f5a623;
+ padding: 15px;
+ border-radius: 4px;
+ font-size: 1rem;
+ line-height: 1.6;
+ color: #5c4716;
+ width: 100%;
+ box-sizing: border-box;
+ }
+
+ #play-audio-btn {
+ font-size: 1.1rem;
+ padding: 12px 24px;
+ border-radius: 30px;
+ background-color: #4a90e2;
+ color: white;
+ border: none;
+ cursor: pointer;
+ box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+ transition: transform 0.1s, background-color 0.2s;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ font-weight: bold;
+ }
+
+ #play-audio-btn:active {
+ transform: scale(0.95);
+ background-color: #357abd;
+ }
+
+ .controls {
+ display: flex;
+ gap: 10px;
+ margin-top: 30px;
+ width: 100%;
+ max-width: 600px;
+ justify-content: center;
+ }
+
+ .action-btn {
+ flex: 1;
+ padding: 15px 10px;
+ font-size: 1rem;
+ border: none;
+ border-radius: 8px;
+ cursor: pointer;
+ font-weight: bold;
+ transition: background-color 0.2s, opacity 0.2s;
+ }
+
+ #prev-btn { background-color: #e2e8f0; color: #4a5568; }
+ #flip-btn { background-color: #4a90e2; color: white; }
+ #next-btn { background-color: #e2e8f0; color: #4a5568; }
+
+ .eval-btn {
+ flex: 1;
+ padding: 15px 5px;
+ font-size: 1rem;
+ border: none;
+ border-radius: 8px;
+ cursor: pointer;
+ font-weight: bold;
+ color: white;
+ }
+
+ #back-to-front-btn { background-color: #95a5a6; }
+ #back-to-front-btn:hover { background-color: #7f8c8d; }
+ #wrong-btn { background-color: #e74c3c; }
+ #wrong-btn:hover { background-color: #c0392b; }
+ 
+#correct-btn { background-color: #2ecc71; }
+ #correct-btn:hover { background-color: #27ae60; }
+
+ .empty-state {
+ font-size: 1.5rem;
+ color: #2ecc71;
+ font-weight: bold;
+ text-align: center;
+ line-height: 1.5;
+ }
+ </style>
+</head>
+<body>
+
+ <h1>🎧 【Dirk Gently】③-2 フラッシュカード</h1>
+
+ <div class="header-stats">
+ <span id="progress-text">1 / 180</span>
+ <span id="score-text">正解数: 0</span>
+ </div>
+ 
+<div class="mode-indicator" id="mode-indicator">現在のモード：📁 全問</div>
+
+ <div class="top-controls">
+ <button class="top-btn btn-all" onclick="setMode('all')">📁 全問</button>
+ <button class="top-btn btn-unanswered" onclick="jumpToUnanswered()">🆕 未回答へジャンプ</button>
+ <button class="top-btn btn-review" onclick="setMode('review')">📅 今日の復習</button>
+ <button class="top-btn btn-incorrect" onclick="setMode('incorrect')">🎯 未正解</button>
+ </div>
+
+ <div id="flashcard">
+ <div id="front-side">
+ <div class="date-badge" id="date-badge">最終回答日：未回答</div>
+ <div class="srs-badge" id="srs-badge"></div>
+ <div class="english-text" id="front-eng-content"></div>
+ <button id="play-audio-btn">🔊 音声を聴く</button>
+ </div>
+
+ <div id="back-side">
+ <div class="english-text-back" id="back-eng-content"></div>
+ <div class="japanese-text" id="jap-content"></div>
+ <div class="note-box" id="note-content"></div>
+ </div>
+ </div>
+
+ <div class="controls" id="controls-front">
+ <button id="prev-btn" class="action-btn" onclick="prevCard()">◀ 前へ</button>
+ <button id="flip-btn" class="action-btn" onclick="flipCard()">🔄 裏返す</button>
+ <button id="next-btn" class="action-btn" onclick="nextCard()">次へ ▶</button>
+ </div>
+
+ <div class="controls" id="controls-back" style="display: none;">
+ <button id="back-to-front-btn" class="eval-btn" onclick="returnToFront()">🔙 表面に戻る</button>
+ <button id="wrong-btn" class="eval-btn" onclick="markIncorrect()">❌ 覚えてない</button>
+ <button id="correct-btn" class="eval-btn" onclick="markCorrect()">◯ 完璧！</button>
+ </div>
+
+ <script>
+ const cardsData = [
+  {"en": "I've been going through Mr. Spring's effects and executing his final wishes", "jp": "スプリング氏の遺品を整理し、彼の遺言と最終意思を執行してきたところです。", "note": "go through は「（遺品や書類を）細かく調べる・整理する」。effects は「遺品、所有物」。execute は「（遺言などを）執行・実行する」。"},
+  {"en": "according to his last will and testament.", "jp": "彼の遺言状（最終意思表明）に従ってね。", "note": "last will and testament は法律用語で「遺言状」。"},
+  {"en": "He left this... for you.", "jp": "彼はこれを……あなたに遺しました。", "note": "leave A for B は「AをBに遺す・遺贈する」。"},
+  {"en": "What's interesting is that his instructions were not to give it to you", "jp": "興味深いのは、彼の指示が『あなたに渡すな』ということだった点です。", "note": "his instructions were not to... で「彼の指示は〜しないことだった」。"},
+  {"en": "unless you were in the presence of someone named... Dirk Gently.", "jp": "『ダーク・ジェントリー』という名の人物が同席していない限りはね。", "note": "in the presence of... は「〜の同席のもとで、〜の面前で」というフォーマルな表現。"},
+  {"en": "Well, it's lucky I'm here, then.", "jp": "まあ、僕がここにいて幸運だったね。", "note": "it's lucky (that)... は「〜で運が良い」。"},
+  {"en": "I doubt very much it's got to do with luck.", "jp": "それが幸運と関係があるとは到底思えませんがね。", "note": "I doubt (that)... は「〜だとは思わない、疑わしい」。have to do with... は「〜と関係がある」。"},
+  {"en": "Patrick Spring rarely left anything of importance to chance.", "jp": "パトリック・スプリングが重要なことを偶然に委ねることはめったにありませんでした。", "note": "rarely は「めったに〜ない」。leave A to chance は「Aを運任せ・偶然に委ねる」。"},
+  {"en": "When Patrick had me track you down...", "jp": "パトリックが僕に君を探し出させた時……", "note": "have + 人 + 動詞の原形 は「人に〜させる（使役）」。track down は「〜を追い詰める、探し出す」。"},
+  {"en": "He knew.", "jp": "彼は知っていたんだ。", "note": "簡潔な気づきのセリフ。"},
+  {"en": "He knew he was going to die.", "jp": "自分が死ぬことを知っていたんだ。", "note": "be going to die は「死ぬ運命にある、死ぬことになっている」。"},
+  {"en": "Yeah, I'm beginning to think he didn't hire me to prevent his murder at all.", "jp": "ああ、彼が僕を雇ったのは自分の殺害を防ぐためなんかじゃなかったと思い始めてきたよ。", "note": "begin to think は「〜と思い始める」。not ... at all は「全く〜ない」。"},
+  {"en": "I think he hired me to solve it.", "jp": "彼は殺人を解決させるために僕を雇ったんだと思う。", "note": "hire A to do は「〜させるためにAを雇う」。指す it は「自分の殺人事件（his murder）」。"},
+  {"en": "Hmm.", "jp": "フム。", "note": "状況を見守る相槌。"},
+  {"en": "\"Three questions, one answer.\"", "jp": "「3つの疑問、1つの答え。」", "note": "パトリックからの手紙・封筒に書かれた謎のメッセージ。"},
+  {"en": "What does that mean?", "jp": "どういう意味なの？", "note": "What does A mean? は「Aはどういう意味か」。"},
+  {"en": "Perhaps we should give the young lady a moment.", "jp": "お嬢さんに少し時間（一人になる時間）をあげた方がいいかもしれませんね。", "note": "give someone a moment は「人に少し時間をあげる、一人にしてあげる」。"},
+  {"en": "Get it together.", "jp": "しっかりしなさい。", "note": "get it together は「（動揺した心を）落ち着かせる、しっかりする」という定番口語。"},
+  {"en": "Get it together.", "jp": "しっかりするのよ。", "note": "自分を奮い立たせる反復。"},
+  {"en": "- What are you looking at? - What?", "jp": "- （ファラ）何を見ているの？ - （ダーク）え？", "note": "What are you looking at? は「何見てるんだよ」。"},
+  {"en": "I thought... you were outside.", "jp": "外にいるのかと思ってたわ。", "note": "I thought (that)... は「〜だと思っていた（実際は違った）」。"},
+  {"en": "Why would I leave the room? All the good stuff is happening in here.", "jp": "何で僕が部屋を出る必要があるんだい？ 面白いことは全部ここで起きているのに。", "note": "Why would I...? は「どうして僕が〜するだろうか（するわけがない）」という反語表現。"},
+  {"en": "Were you and Patrick... close?", "jp": "君とパトリックは……親しかったのかい？", "note": "close は「（人間関係が）親しい、親密な」。"},
+  {"en": "I've known him my entire life.", "jp": "生まれてからずっと彼を知っているわ。", "note": "I've known... my entire life は現在完了形（継続）で「昔からずっと知っている」。"},
+  {"en": "When... Catherine was killed, my dad never recovered and...", "jp": "キャサリン（母）が殺された時、父は立ち直れなくて……", "note": "recover は「（病気や立ち直りから）回復する、立ち直る」。"},
+  {"en": "Patrick gave my life a lot of purpose, if that makes any sense, and I don't--", "jp": "パトリックは私の人生に大きな生きがいを与えてくれたの。意味が通じるかわからないけれど……", "note": "give life purpose は「人生に生きがい・目的を与える」。if that makes any sense は「意味が分かるなら、変な意味じゃなく」。"},
+  {"en": "In three days, everything just suddenly went crazy, and I screwed it all up again.", "jp": "この3日間で何もかもが突然狂ってしまって、私がまた全部台無しにしちゃった。", "note": "go crazy は「狂う、狂気じみる」。screw up は「〜を台無しにする、失敗する」。"},
+  {"en": "Patrick's dead, Lydia's gone, I feel like a...", "jp": "パトリックは死に、リディアは消え、私はまるで……", "note": "I feel like a... は「〜のように感じる」。"},
+  {"en": "A crazy confused failure talking to a Brit who keeps asking questions that don't make sense.", "jp": "わけのわからない質問ばかりしてくるイギリス人と話してる、混乱した狂った失格者よ。", "note": "Brit は「イギリス人（英人の口語）」。keep -ing は「〜し続ける」。make sense は「意味が通じる」。"},
+  {"en": "I am ineffectual and a generalized scramble of disappointment, incompetence.", "jp": "私は無力で、失望と無能力のごちゃ混ぜ人間なのよ。", "note": "ineffectual は「効果のない、無力な」。scramble は「ごちゃ混ぜ、混乱」。incompetence は「無能、不適格」。"},
+  {"en": "No, no, listen.", "jp": "いやいや、聞きなさい。", "note": "相手をなだめるセリフ。"},
+  {"en": "You're only some of those things.", "jp": "君はそれらの一部分にすぎないよ（そこまで酷くはない）。", "note": "some of those things で「それらのうちのいくつか」と慰めるダーク独特の表現。"},
+  {"en": "Agh! No.", "jp": "ああ！ もう嫌。", "note": "自己嫌悪の叫び。"},
+  {"en": "Okay.", "jp": "分かったわ。", "note": "気持ちを切り替える相槌。"},
+  {"en": "I need to go find Lydia.", "jp": "リディアを探しに行かなきゃ。", "note": "need to go do は「〜しに行かねばならない」。"},
+  {"en": "No. We can't leave. Not yet.", "jp": "ダメだ。僕らはここを離れられない。まだね。", "note": "not yet は「まだ〜ない」。"},
+  {"en": "Why?", "jp": "どうして？", "note": "理由を尋ねる疑問詞。"},
+  {"en": "Do you know something?", "jp": "何か知ってるの？", "note": "Do you know something? は直感で相手の隠し事を問う表現。"},
+  {"en": "I don't know anything. Ever.", "jp": "僕は何も知らないよ。いつだってね。", "note": "anything ever で「何一つとして〜ない」。"},
+  {"en": "It's really quite relaxing.", "jp": "実に心安らぐことさ。", "note": "quite relaxing は「非常にリラックスできる、心が落ち着く」。"},
+  {"en": "But this is what I do, this is how I work.", "jp": "でもこれが僕のやり方であり、僕の探偵手法なんだ。", "note": "this is how I work で「これが僕の働き方・やり方」。"},
+  {"en": "I follow fate around. It's how we found you.", "jp": "僕は運命の周りを追いかけているんだ。そうやって君を見つけたようにね。", "note": "follow fate around は「運命の赴くままにくっついていく」。"},
+  {"en": "I can't promise anything, but just... give it a chance?", "jp": "何も約束はできないけれど、ただ……試しに賭けてみないかい？", "note": "give it a chance は「（失敗するかもしれなくても）試してみる、機会を与える」。"},
+  {"en": "Well, what do you want to do?", "jp": "じゃあ、あなたは何をしたいの？", "note": "what do you want to do? は定番質問。"},
+  {"en": "I would start by opening that envelope.", "jp": "僕ならまず、その封筒を開けることから始めるね。", "note": "I would start by -ing は「〜することから始めるだろう（提案）」の仮定法。"},
+  {"en": "\"You.\" This doesn't look anything like you. He's got the hair all wrong.", "jp": "『君』だって。これ、全然君に見えないよ。髪型がまったく間違ってる。", "note": "doesn't look anything like... は「〜に全く似ていない」。get A wrong は「Aを間違える」。"},
+  {"en": "Um?", "jp": "ん？", "note": "疑問の声をあげる。"},
+  {"en": "Farah?", "jp": "ファラ？", "note": "声をかける。"},
+  {"en": "What are you-- No. Where are you--", "jp": "何をしている――いや、どこへ行く――", "note": "相手の不審な動きを追うセリフ。"},
+  {"en": "Oh! It's a map. It's a map! I get it!", "jp": "あ！ 地図だ！ 地図だよ！ 分かったぞ！", "note": "I get it! は「（意味が）分かった！ ひらめいた！」。"},
+  {"en": "Jesus Christ! Oh, thank God you're okay.", "jp": "なんてこった！ ああ、無事で良かったよ。", "note": "thank God は「神に感謝する、本当によかった」。"},
+  {"en": "I just went shopping. It's okay. It's okay.", "jp": "買いものに行っていただけだよ。大丈夫、大丈夫だから。", "note": "go shopping は「買い物に行く」。in one piece で「無事に」。"},
+  {"en": "Sorry. I didn't mean to scare you.", "jp": "ごめんね。驚かせるつもりはなかったんだ。", "note": "I didn't mean to... は「〜するつもりではなかった」。scare は「（人）を怖がらせる、驚かせる」。"},
+  {"en": "Everything's okay, I just--", "jp": "全部大丈夫、ただ私は――", "note": "動揺を抑える発言。"},
+  {"en": "I had a little flare-up, but... I made it home in one piece.", "jp": "ちょっと発作が出ちゃったけど……無事に家に辿り着けたよ。", "note": "flare-up は「（病気・痛みの）再発、発作」。make it home は「無事帰宅する」。"},
+  {"en": "Okay.", "jp": "分かった。", "note": "安堵する返答。"},
+  {"en": "Why are you out of breath? How did you get here? I thought that your car was all beat up.", "jp": "なんで息が切れてるの？ どうやってここに来たの？ 車はボロボロだと思ってたけど。", "note": "out of breath は「息切れして」。all beat up は「ボロボロに壊れた」。"},
+  {"en": "I ran, and then I took the bus, and then I ran some more.", "jp": "走って、それからバスに乗って、また走ったんだよ。", "note": "take the bus は「バスに乗る」。run some more は「さらに走る」。"},
+  {"en": "God, I was so worried.", "jp": "ああ、すごく心配したんだから。", "note": "be worried は「心配している」。"},
+  {"en": "I'm fine.", "jp": "俺は大丈夫だ。", "note": "I'm fine は「大丈夫」。"},
+  {"en": "Where's Dirk?", "jp": "ダークはどこ？", "note": "相手の居場所を尋ねる。"},
+  {"en": "\"Where's Dirk\"?", "jp": "「ダークはどこ」だって？", "note": "聞き返すトッド。"},
+  {"en": "Yeah. I just-- I have to ask him about some stuff 'cause some stuff happened.", "jp": "うん。ただ――彼にいくつか聞きたいことがあるの、色々と起きちゃったから。", "note": "ask A about B は「AにBについて尋ねる」。stuff は口語で「色々、こと」。"},
+  {"en": "You have to ask Dirk Gently about some stuff?", "jp": "ダーク・ジェントリーに聞くことがあるだと？", "note": "信じられないというトーンの問い返し。"},
+  {"en": "Isn't he the reason that all this weird stuff is happening?", "jp": "こんな奇妙なことが起きている元凶は彼なんじゃないのか？", "note": "the reason that... は「〜である理由・原因」。weird は「奇妙な」。"},
+  {"en": "What weird stuff?", "jp": "奇妙なことって何？", "note": "What + 名詞 で「何の〜」。"},
+  {"en": "Everything. Look, he-- He doesn't know anything.", "jp": "全部だよ。いいか、あいつは――あいつは何ひとつ分かってないんだ。", "note": "He doesn't know anything で「彼は何も知らない」。"},
+  {"en": "The amount of stuff that he doesn't know is stupefying. It would blow your mind.", "jp": "あいつの無知の量は呆れ返るほどさ。腰を抜かす（驚愕する）レベルだよ。", "note": "stupefying は「呆れ返るほどの、驚くべき」。blow one's mind は「人をたまげさせる、驚愕させる」。"},
+  {"en": "Okay, but isn't that how he works?", "jp": "分かったわ、でもそれこそが彼のやり方（探偵手法）なんじゃないの？", "note": "isn't that how he works? は「それが彼のやり方ではないか」。"},
+  {"en": "Like, as a detective?", "jp": "ほら、探偵としてさ？", "note": "as a detective は「探偵として」。"},
+  {"en": "He is barely a detective.", "jp": "あいつは探偵と呼べるかどうかも怪しいレベルだ。", "note": "barely は「かろうじて〜、到底〜とは言えない」。"},
+  {"en": "Okay.", "jp": "そっか。", "note": "納得したふ答。"},
+  {"en": "Then why are you his assistant?", "jp": "じゃあ何であなたは彼の助手をしているの？", "note": "assistant は「助手」。何故助手をしているのか問う。"},
+  {"en": "I'm not--", "jp": "俺は助手じゃ――", "note": "否定しようとするトッド。"},
+  {"en": "There's something that you're not telling me.", "jp": "私に隠している（話していない）ことがあるでしょ。", "note": "there's something (that)... で「〜な何かがある」。tell は「話す」。"},
+  {"en": "Is there, like... a lot of stuff that you're not telling me?", "jp": "もしかして……言っていないことが山ほどあるの？", "note": "a lot of stuff (that)... は「山ほどのこと」。"},
+  {"en": "No. I-- No, there's just--", "jp": "いや。俺は――いや、ただ――", "note": "言葉に詰まるトッド。"},
+  {"en": "Maybe it's a good idea if you came to stay with me.", "jp": "君が俺の家に来て一緒に暮らした方がいいかもしれない。", "note": "It's a good idea if... は「〜した方が良い考えだ（提案）」。"},
+  {"en": "You want me to leave the house.", "jp": "私に家を出て行ってほしいのね。", "note": "want A to do は「Aに〜してほしい」。"},
+  {"en": "You did already today, and it was fine.", "jp": "今日すでに外に出ただろ、大丈夫だったじゃないか。", "note": "it was fine で「問題なかった、大丈夫だった」。"},
+  {"en": "No, it wasn't fine.", "jp": "ううん、大丈夫じゃなかったわ。", "note": "否定するアマンダ。"},
+  {"en": "It was almost... not fine.", "jp": "もう少しで……ヤバいところだったんだから。", "note": "almost not fine で「危うく大丈夫ではなくなるところだった」。"},
+  {"en": "Don't you remember what this was like?", "jp": "発作がどんなものだったか覚えてないの？", "note": "Don't you remember...? は「〜を覚えていないのか？」。what this was like は「これがどんな感じだったか」。"},
+  {"en": "I-- I-- I'll call a cab. I used to take cabs all the time when I still had attacks.", "jp": "オ――俺がタクシーを呼ぶよ。俺もまだ発作があった頃はいつもタクシーに乗っていたんだ。", "note": "call a cab は「タクシーを呼ぶ」。used to do は「かつて〜していた（今はしていない）」。take a cab で「タクシーに乗る」。"},
+  {"en": "Look, you'll stay with me. It'll be great. I promise.", "jp": "いいか、俺と一緒に暮らすんだ。きっとうまくいくよ。約束する。", "note": "stay with me で「俺のところに泊まる・住む」。I promise で「約束する」。"},
+  {"en": "It's here.", "jp": "ここだ。", "note": "目的地に着く。"},
+  {"en": "Farah, I think if we--", "jp": "ファラ、僕らがもし――", "note": "呼びかけるダーク。"},
+  {"en": "No, it's this way..", "jp": "違う、こっちよ……", "note": "this way は「こちら側、この方向」。"},
+  {"en": "Farah?", "jp": "ファラ？", "note": "確認するダーク。"},
+  {"en": "I've got it. I've got it. I've got an idea. I've got an idea.", "jp": "分かったわ、分かった。アイデアがあるの。ひらめいたわ。", "note": "I've got an idea は「アイデアをひらめいた」。"},
+  {"en": "Sorry. Got it wrong. It's down here.", "jp": "ごめんなさい、間違えた。この下よ。", "note": "get A wrong は「間違える」。down here は「この下の階・奥」。"},
+  {"en": "It's definitely this way.", "jp": "絶対こっちだわ。", "note": "definitely は「絶対に、間違いなく」。"},
+  {"en": "That didn't work.", "jp": "今のは失敗だったね。", "note": "work はここでは「機能する、うまくいく」。that didn't work で「うまく行かなかった」。"},
+  {"en": "This is it.", "jp": "ここよ（ついに着いたわ）。", "note": "This is it は「これだ、ここだ」。"},
+  {"en": "Um.", "jp": "えーと。", "note": "戸惑う声。"},
+  {"en": "Okay, you're a bit ahead of me now on this one. What?", "jp": "よし、今回は君の方が僕より一歩先を行っているね。で、何だい？", "note": "a bit ahead of me は「僕より少し先を行っている」。"},
+  {"en": "Laundry?", "jp": "洗濯物かい？", "note": "laundry は「洗濯物、洗濯場」。"},
+  {"en": "Maybe it's...", "jp": "もしかしたら……", "note": "模索するフレーズ。"},
+  {"en": "Ah-ha. Nope. Not in there.", "jp": "アハ。ううん、そこには何もないね。", "note": "not in there で「そこにはない」。"},
+  {"en": "What are we looking for? Do you know?", "jp": "僕らは何を探しているんだい？ 君は知っているのかい？", "note": "look for... は「〜を探す」。Do you know? で「知っているのか」。"},
+  {"en": "It's a wall.", "jp": "壁よ。", "note": "wall は「壁」。"},
+  {"en": "Was there something about this wall that was special to him? Did he enjoy walls?", "jp": "この壁に彼にとって特別な何かがあったのかい？ 彼は壁が好きだったのかな？", "note": "special to him で「彼にとって特別な」。enjoy は「楽しむ、好む」。"},
+  {"en": "Did he ever mention a love for walls? Because that could be a clue.", "jp": "壁への愛について言及したことは？ それがヒントになるかもしれないからね。", "note": "ever mention は「これまでに言及する」。love for... で「〜への愛」。clue は「手がかり、ヒント」。"},
+  {"en": "Perhaps the person or or people who killed Patrick Spring were rogue wall enthusiasts.", "jp": "もしかするとパトリック・スプリングを殺した人物たちは、凶悪な壁マニア（愛好家）だったのかも。", "note": "rogue は「はぐれの、凶悪な、異常な」。enthusiast は「熱狂的ファン、マニア」。皮肉たっぷりのダークの仮説。"},
+  {"en": "You hate these walls!", "jp": "君はこの壁が嫌いなんだね！", "note": "you hate... で「〜を憎んでいる」。"},
+  {"en": "Give me the map.", "jp": "地図をちょうだい。", "note": "Give me A で「Aをくれ」。"},
+  {"en": "[chiming]", "jp": "（機械の作動音・チャイム）", "note": "効果音描写。"},
+  {"en": "Oh! What is this place?", "jp": "おや！ ここは一体どこなんだい？", "note": "What is this place? は「ここはどこだ」。"},
+  {"en": "This room is built into the foundation of the house.", "jp": "この部屋は屋敷の基礎（土台）部分に組み込まれているわ。", "note": "be built into... は「〜に組み込まれる」。foundation は「基礎、土台」。"},
+  {"en": "It's been here since day one.", "jp": "最初からずっとここにあったのね。", "note": "since day one は「最初から、一日目からずっと」という口語フレーズ。"},
+  {"en": "Patrick Spring didn't build this, Zachariah Webb did.", "jp": "パトリック・スプリングがこれを作ったんじゃない、ザカリア・ウェブが作ったんだわ。", "note": "強調の代名詞 did（= built this）。"},
+  {"en": "What's that big electro-thingie?", "jp": "あの大きな『電気ナンチャラ装置』は何だい？", "note": "thingie は口語で「〜ナンチャラ、名前の分からない物体」。"},
+  {"en": "It's some kind of generator. But this doesn't make any sense.", "jp": "一種の発電機ね。でもこれじゃ全く筋が通らないわ。", "note": "some kind of... は「一種の〜」。generator は「発電機」。make sense で「理解できる、筋が通る」。"},
+  {"en": "Patrick didn't know anything about technology.", "jp": "パトリックはテクノロジー（技術）のことなんて何も知らなかったのに。", "note": "didn't know anything about... で「〜について何も知らなかった」。"},
+  {"en": "Oh.", "jp": "おや。", "note": "驚きの声。"},
+  {"en": "How did you do that?", "jp": "どうやってそれをやったの？", "note": "How did you do that? は「どうやってそれをやったのか」。"},
+  {"en": "With my hand.", "jp": "僕の手でさ。", "note": "素直すぎる（とぼけた）回答。"},
+  {"en": "What's this?", "jp": "これは何？", "note": "物体を指す質問。"},
+  {"en": "Edgar Spring. Who's that?", "jp": "エドガー・スプリング。誰だいそれは？", "note": "Who's that? は「それは誰か」。"},
+  {"en": "Patrick's father. But this is Patrick's handwriting.", "jp": "パトリックのお父さんよ。でもこれはパトリックの筆跡だわ。", "note": "handwriting は「筆跡、手書き文字」。"},
+  {"en": "\"It started here, it ends here. Please save her.\"", "jp": "「ここから始まり、ここで終わる。どうか彼女を救ってくれ。」", "note": "メッセージの朗読。save her は「彼女を救う」。"},
+  {"en": "What is this thing?", "jp": "この物体は何なんだろう？", "note": "What is this thing? は「この物体は何だ」。"},
+  {"en": "Very important.", "jp": "とても重要なものね。", "note": "very important で「とても重要な」。"},
+  {"en": "\"Please save her. Save, please, save her.\" Save her.", "jp": "「どうか彼女を救ってくれ。救って、頼むから、彼女を救ってくれ。」彼女を救え、か。", "note": "リフレインの解読。"},
+  {"en": "Save her.", "jp": "彼女を救う……", "note": "反芻するダーク。"},
+  {"en": "He must be talking about Lydia.", "jp": "リディアのことを言っているに違いないわ。", "note": "must be -ing は「〜しているに違いない」。talk about は「〜について話す」。"},
+  {"en": "He planned this.", "jp": "彼はこれを計画していたのね。", "note": "plan は「〜を計画する」。"},
+  {"en": "All of it.", "jp": "すべてのことを。", "note": "All of it で「そのすべて」。"},
+  {"en": "But... if Patrick knew this was going to happen, then why didn't he save himself?", "jp": "でも……もしパトリックがこうなることを知っていたなら、何で自分自身を救わなかったのかしら？", "note": "if + 過去形, then why didn't he...? で仮定と矛盾への問いかけ。save himself は「自分自身を救う」。"},
+  {"en": "Dirk?", "jp": "ダーク？", "note": "相手を呼ぶ声。"},
+  {"en": "I'm starting to think you're actually a pretty good detective.", "jp": "私、あなたが本当はかなり優秀な探偵なのかもと思い始めてきたわ。", "note": "start to think は「〜と思い始める」。pretty good は「かなり良い、優秀な」。"},
+  {"en": "Bart?", "jp": "バート？", "note": "バートに声をかける。"},
+  {"en": "Yeah.", "jp": "ああ。", "note": "答えるケン。"},
+  {"en": "Bart! Bart!", "jp": "バート！ バート！", "note": "必死に呼ぶ。"},
+  {"en": "Ken.", "jp": "ケン。", "note": "返答するバート。"},
+  {"en": "Please do something. Do anything. Something. Please.", "jp": "お願いだから何かしてくれ。何でもいいから。頼むよ。", "note": "do something / do anything で「何かする」。必死の懇願。"},
+  {"en": "It doesn't work like that.", "jp": "世の中そんな風には上手くいかないのよ。", "note": "it doesn't work like that は「それはそんな風には機能しない・いかない」。"},
+  {"en": "Like what? Oh, my God.", "jp": "どんな風にだよ？ ああ、なんてこった。", "note": "Like what? は「どんな風に？」。"},
+  {"en": "These are the ones that killed Jake?", "jp": "こいつらがジェイクを殺した奴らなのか？", "note": "the ones that... で「〜した奴ら」。"},
+  {"en": "They don't look like professional hires.", "jp": "プロの雇い主（殺し屋）には見えないな。", "note": "don't look like... は「〜のようには見えない」。professional hires で「プロの雇い主・殺し屋」。"},
+  {"en": "Is that a new guy?", "jp": "あいつは新しい奴か？", "note": "new guy で「新しい男」。"},
+  {"en": "Who sent you? The Cavatos?", "jp": "誰に送られてきた？ カヴァト一味か？", "note": "Who sent you? で「誰がお前を送ったのか」。"},
+  {"en": "I don't know who the Cavatos are.", "jp": "カヴァト一味が誰なのかなんて俺は知らない！", "note": "I don't know who... are で「〜が誰だか知らない」。"},
+  {"en": "Okay, she's crazy? All right?", "jp": "いいか、こいつはイカれてるんだ！ 分かるか？！", "note": "she's crazy で「彼女は狂っている」。"},
+  {"en": "She killed him. Not me. I mean, I'm-- I'm just here.", "jp": "あいつが殺したんだ、俺じゃない！ つまり、俺は――俺はただここにいるだけなんだ！", "note": "She killed him, not me で「俺じゃなく彼女が殺した」。I'm just here で「俺はただここにいるだけ」。"},
+  {"en": "She killed him. She's the one, man.", "jp": "彼女が殺したんだ。あいつが犯人なんだよ！", "note": "She's the one は「彼女こそがその（殺した）本人だ」。"},
+  {"en": "This is just noise.", "jp": "こいつはただの雑音だな。", "note": "just noise は「ただの雑音・戯言」。"},
+  {"en": "I don't care.", "jp": "知ったことか。", "note": "I don't care は「どうでもいい、気にしない」。"},
+  {"en": "You're gonna burn.", "jp": "お前らは焼き殺してやる。", "note": "be gonna burn で「燃やされる、焼かれる」。"},
+  {"en": "Ken, that new guy who just arrived, that's who we were waiting for.", "jp": "ケン、今到着したあの新しい奴、あいつこそ私たちが待っていた相手よ。", "note": "the guy who just arrived は「今到着した男」。that's who we were waiting for で「あいつこそ私たちが待っていた人物だ」。"},
+  {"en": "[chuckles]", "jp": "（クスッと笑う）", "note": "嘲笑。"},
+  {"en": "Listen! Please! Just get me down!", "jp": "聴いてくれ！ 頼むから！ 俺をここから降ろしてくれ！", "note": "get me down は「私を（吊り下げから）降ろす」。"},
+  {"en": "I'm not the guy you want. She is, okay?", "jp": "俺はお前たちが狙っている奴じゃない。彼女なんだ、分かったか？！", "note": "I'm not the guy you want で「俺はお前たちが探している男じゃない」。"},
+  {"en": "This will shut him up.", "jp": "これでこいつを黙らせられるな。", "note": "shut someone up は「（人）を黙らせる」。"},
+  {"en": "No!", "jp": "やめろ！", "note": "絶叫。"},
+  {"en": "Put some clothes on.", "jp": "服を着なよ。", "note": "put some clothes on は「服を着る」。"},
+  {"en": "You knew this was gonna happen.", "jp": "こうなるって分かってたんだな。", "note": "You knew... で「〜だと知っていた」。gonna happen で「起きようとしている」。"},
+  {"en": "Well, not this, but something like this, sure.", "jp": "まあ、これそのものじゃないけど、こんな感じのことが起きるってことはね、もちろん。", "note": "something like this で「こんな感じのこと」。"},
+  {"en": "It's real, isn't it? It's all real.", "jp": "本物なんだろ？ 全部本物なんだな。", "note": "It's real, isn't it? は「本物なんだろ？」。全幅の信頼への変化。"},
+  {"en": "You really are who you say you are.", "jp": "君は本当に自分で言っていた通りの存在なんだ。", "note": "who you say you are で「自分が言っている通りの人物」。"},
+  {"en": "Some kind of... killer angel.", "jp": "一種の……『殺戮の天使』なんだ。", "note": "killer angel は「殺し屋の天使、殺戮の天使」。ケンの覚醒。"},
+  {"en": "Angel?", "jp": "天使？", "note": "怪しむバート。"},
+  {"en": "I really am what I say I am.", "jp": "私は本当に言った通りの存在よ。", "note": "what I say I am は「私が言っている通りの存在」。"},
+  {"en": "I'm with you for a reason.", "jp": "俺が君と一緒にいるのには理由があるんだ。", "note": "for a reason は「理由があって」。"},
+  {"en": "My life, it's...", "jp": "俺の人生は、それは……", "note": "感慨に浸る言葉。"},
+  {"en": "It's happening for a reason.", "jp": "すべて意味（理由）があって起きているんだ。", "note": "happen for a reason は「理由があって起きる」。宇宙の秩序への同調。"},
+  {"en": "Maybe, yeah.", "jp": "たぶんね、ええ。", "note": "同意するバート。"},
+  {"en": "We have to find Dirk Gently.", "jp": "俺たちはダーク・ジェントリーを見つけ出さなきゃいけない。", "note": "have to find で「〜を見つけ出さねばならない」。"},
+  {"en": "We need to kill Dirk Gently.", "jp": "俺たちはダーク・ジェントリーを殺す必要がある。", "note": "need to kill で「殺す必要がある」。"},
+  {"en": "You drive.", "jp": "あなたが運転しなよ。", "note": "You drive は「君が運転しろ」。相棒としての承認。"},
+  {"en": "This is fun!", "jp": "これ楽しいわね！", "note": "fun は「楽しい」。大惨殺の後のテンション。"},
+  {"en": "See? That wasn't so bad, right?", "jp": "ほらね？ そんなに悪くなかったろ？", "note": "That wasn't so bad は「そんなに悪くなかった」。"},
+  {"en": "What happened to your lock?", "jp": "鍵はどうしちゃったの？", "note": "What happened to...? は「〜に何があったのか」。lock は「ドアの鍵」。"},
+  {"en": "Oh, my God. What happened to your apartment?", "jp": "なんてこと……あなたのアパートに何があったの？！", "note": "apartment は「アパート・部屋」。荒れ果てた部屋への驚き。"},
+  {"en": "Some kind of semi-conductor or something.", "jp": "半導体か何かだと思う。", "note": "semi-conductor は「半導体」。or something で「か何か」。"},
+  {"en": "Semi-conductor? Like a--", "jp": "半導体？ まるで――", "note": "疑問を抱くファラ。"},
+  {"en": "Oh, God.", "jp": "なんてことだわ。", "note": "驚きの声。"},
+  {"en": "Hey, Dirk.", "jp": "やあ、ダークだよ。", "note": "気さくな挨拶。"},
+  {"en": "Oh, hi, Amanda.", "jp": "おや、やあアマンダ。", "note": "アマンダに挨拶。"},
+  {"en": "Look, it's Amanda. Amanda's fantastic.", "jp": "見て、アマンダだよ。アマンダは素晴らしいね。", "note": "fantastic は「素晴らしい、素敵な」。"},
+  {"en": "You're fantastic.", "jp": "君は素晴らしいよ。", "note": "褒め言葉。"},
+  {"en": "Is this part of the case?", "jp": "これも事件の一部なの？", "note": "part of the case で「事件の一部・関連事項」。"},
+  {"en": "Yes. But--", "jp": "そうだよ、だけど――", "note": "肯定的返答。"},
+  {"en": "Dirk, why are you here?", "jp": "ダーク、何でここにいるんだ？", "note": "why are you here? で「何故ここにいるのか」。"},
+  {"en": "We were waiting for you.", "jp": "君を待っていたんだよ。", "note": "wait for... で「〜を待つ」。"},
+  {"en": "Hey, Todd.", "jp": "やあ、トッド。", "note": "挨拶。"},
+  {"en": "Hi, Farah.", "jp": "どうも、ファラ。", "note": "挨拶。"},
+  {"en": "What is this?", "jp": "これは一体何だ？", "note": "What is this? は「これは何だ」。壁の落書きを指す。"},
+  {"en": "We don't know.", "jp": "私たちも分からないの。", "note": "don't know で「分からない」。"},
+  {"en": "We think it's some schematic of something.", "jp": "何かの配線図（回路図）か何かだと思うんだけど。", "note": "schematic は「（電気・機械の）配線図、回路図、概要図」。"},
+  {"en": "Dirk, this is my apartment.", "jp": "ダーク、ここは俺のアパートだぞ。", "note": "this is my apartment で「ここは俺の部屋だ」。"},
+  {"en": "Oh, is that why you're here?", "jp": "おや、だから君はここにいるのかい？", "note": "Is that why...? は「だから〜なのか」。とぼけた返答。"},
+  {"en": "It's a map.", "jp": "地図よ。", "note": "map は「地図」。"},
+  {"en": "It's another map. A map led us to a map.", "jp": "また別の地図だわ。地図が私たちを次の地図へと導いたのね。", "note": "lead A to B で「AをBへ導く」。"},
+  {"en": "It's not a map.", "jp": "地図じゃないわ。", "note": "否定するアマンダ。"},
+  {"en": "It's one of those layers on maps you can see on city government websites that show utilities..", "jp": "市役所のウェブサイトでインフラ施設を表示する時に見る、地図のレイヤー層の一つよ。", "note": "city government で「市役所・地方政府」。utilities は「（電気・水道・ガスなどの）公共インフラ設備」。"},
+  {"en": "City government web--", "jp": "市役所のウェブ――", "note": "言葉を反芻するダーク。"},
+  {"en": "I don't get out that much.", "jp": "私、あんまり外出しないからね。", "note": "get out で「外出する、外に出る」。that much で「そんなに頻繁に」。"},
+  {"en": "Me neither.", "jp": "俺もだよ。", "note": "Me neither は「（否定文に対して）俺もそう（外に出ない）だ」。"},
+  {"en": "This is an electrical grid. See?", "jp": "これは電力網（送電網）よ。ほらね？", "note": "electrical grid は「電力網、送電網」。"},
+  {"en": "And those are power lines.", "jp": "そしてあれらは送電線だわ。", "note": "power line は「送電線、電線」。"},
+  {"en": "Oh, cool. No, this is really crazy.", "jp": "おや、すごいね。いやあ、これは実にクレイジーだ。", "note": "cool は「格好いい、すごい」。crazy は「凄まじい、クレイジーな」。"},
+  {"en": "Oh, my God. She's right.", "jp": "なんてこと。彼女の言う通りだわ。", "note": "She's right で「彼女が正しい、彼女の言う通りだ」。"},
+  {"en": "Those are where the roads would be, and that's the Ridgely.", "jp": "あそこが道路のあるはずの場所で、そしてあそこがリッジリー（この建物）ね。", "note": "where the roads would be で「道路があるであろう場所」。Ridgely は建物の名前。"},
+  {"en": "That's this building.", "jp": "この建物のことよ。", "note": "this building で「この建物」。"},
+  {"en": "I'm Farah.", "jp": "ファラよ。", "note": "自己紹介。"},
+  {"en": "I'm Amanda.", "jp": "アマンダよ。", "note": "自己紹介。"},
+  {"en": "Cool jacket.", "jp": "素敵なジャケットね。", "note": "Cool jacket で「かっこいい上着」。"},
+  {"en": "It's all happening.", "jp": "すべてが動いている（起きている）ぞ。", "note": "It's all happening は「万事が展開している、事態が進展している」。"},
+  {"en": "Oh, for God's sakes.", "jp": "ああ、まったくもう！", "note": "for God's sakes は「頼むから、まったくもう（呆れ・憤り）」。"},
+  {"en": "Oh! Would you stop following me?", "jp": "おい！ 俺の後をついてくるのをやめてくれないか？！", "note": "stop -ing は「〜するのをやめる」。follow は「〜の後をついていく」。"},
+  {"en": "I was just going down to get the magic light bulb from my car.", "jp": "車から魔法の電球を取って下に降りようとしていただけだよ。", "note": "go down は「（階下へ）降りる」。magic light bulb は「魔法の電球」。"},
+  {"en": "Magic light bulb?", "jp": "魔法の電球だって？", "note": "言葉に反応するトッド。"},
+  {"en": "Look, what did I tell you?", "jp": "いいか、俺が何て言ったか覚えてるか？", "note": "what did I tell you? は「俺が何て言った？（注意したろ）」。"},
+  {"en": "Will you just get out?", "jp": "頼むから出て行ってくれよ！", "note": "will you just...? は「頼むから〜してくれ」。get out で「出て行く」。"},
+  {"en": "I told you it would bend back around to you, and now it has.", "jp": "運命が巡り巡って君のもとへ戻ってくると言っただろ、そして今そうなったんだ。", "note": "bend back around to... は「巡り巡って〜のもとへ戻ってくる」。now it has は「今や戻ってきた」。"},
+  {"en": "Give me a second.", "jp": "ちょっと待ってくれ。", "note": "give me a second は「少々時間をくれ、ちょっと待って」。"},
+  {"en": "We're meant to know each other.", "jp": "僕らは出会う運命（お互いを知り合う運命）にあったんだよ。", "note": "be meant to do は「〜する運命・定めである」。know each other で「お互いを知る」。"},
+  {"en": "Now, I'm sick of having this conversation.", "jp": "もうこんな会話をするのはウンザリなんだよ！", "note": "be sick of -ing は「〜にウンザリしている、飽き飽きしている」。have a conversation で「会話をする」。"},
+  {"en": "There's a map in there with your bloody building right at the center of it.", "jp": "あの中には君の呪われた建物がまさに中心に描かれた地図があるんだぞ！", "note": "bloody はイギリス口語の強調（呪わしい、忌々しい）。right at the center of... で「まさに〜の中心に」。"},
+  {"en": "I want your help.", "jp": "君の助けが欲しいんだ。", "note": "want one's help で「〜の助けが欲しい」。率直なダークの叫び。"},
+  {"en": "This neighborhood...", "jp": "この地区（近所）は……", "note": "neighborhood は「近所、近隣地区」。"},
+  {"en": "the one we're in right now...", "jp": "俺たちが今まさにいるこの場所は……", "note": "the one we're in は「俺たちがいる場所」。"},
+  {"en": "it's called Springsborough.", "jp": "『スプリングスバロー』と呼ばれているんだ。", "note": "be called... は「〜と呼ばれている」。"},
+  {"en": "Like-- Like Edgar Spring.", "jp": "まるで――エドガー・スプリングみたいにさ。", "note": "like... は「〜のように」。"},
+  {"en": "That was Patrick Spring's father, right?", "jp": "それってパトリック・スプリングの父親のことだろ、そうだろ？", "note": "father は「父親」。right? で「そうだろ？」。"},
+  {"en": "Springsborough.", "jp": "スプリングスバロー……", "note": "名前の繋がりを噛み締める。"},
+  {"en": "It's not a coincidence, is it?", "jp": "これって偶然じゃないよな？", "note": "coincidence は「偶然の一致」。is it? は付加疑問文「だろ？」。"},
+  {"en": "No.", "jp": "ああ、違うね。", "note": "否定するダーク。"},
+  {"en": "I'm certain we'll find that it's not.", "jp": "偶然なんかじゃないと判明すると確信しているよ。", "note": "be certain (that)... で「〜だと確信している」。find that... で「〜だと判明する」。"},
+  {"en": "You knew this was going to happen.", "jp": "こうなるって分かってたんだな。", "note": "You knew... で「知っていたな」。"},
+  {"en": "Not this, but... something like this. Yes.", "jp": "これそのものじゃないけれど……こんな感じのことならね、そうさ。", "note": "something like this で「こんな感じのこと」。"},
+  {"en": "It's real, isn't it? It's all real.", "jp": "本物なんだな？ 全部本物なんだな。", "note": "It's real, isn't it? で「本物なんだろ？」。"},
+  {"en": "You really are what you say you are.", "jp": "お前は本当に自分で言っていた通りの存在なんだな。", "note": "what you say you are で「自分が言っている通りの存在」。"},
+  {"en": "Some kind of holistic detective.", "jp": "一種の……『全体論的探偵』なんだ。", "note": "holistic detective は「全体論的探偵」。トッドの認諾。"},
+  {"en": "I'm trying.", "jp": "そうあろうと努力しているよ。", "note": "try は「努力する、試みる」。控えめな自称。"},
+  {"en": "Is this enough proof?", "jp": "これで十分な証拠になるか？", "note": "enough proof で「十分な証拠」。"},
+  {"en": "Will you help me?", "jp": "俺を助けてくれるか？", "note": "Will you help me? で「俺を助けてくれるか」。立場の一転。"},
+  {"en": "Hello, Project Icarus.", "jp": "やあ、『プロジェクト・イカロス』。", "note": "Project Icarus はダーク・ジェントリーの極秘コードネーム。"},
+  {"en": "No.", "jp": "いやだ。", "note": "拒絶の反応。"},
+  {"en": "Leave me alone.", "jp": "ほっといてくれ。", "note": "leave someone alone は「（人）を一人にしておく、ほっとく」。"},
+  {"en": "Svlad, we need to talk.", "jp": "スヴラド、話す必要がある。", "note": "Svlad はダークの旧名（スヴラド・シジェリ）。need to talk で「話す必要がある」。"},
+  {"en": "That's not my name anymore.", "jp": "それはもう僕の名前じゃない。", "note": "not ... anymore で「もはや〜ない」。"},
+  {"en": "Dirk, then.", "jp": "じゃあ、ダーク。", "note": "呼び名を改める。"},
+  {"en": "I said leave me alone.", "jp": "ほっといてくれって言っただろ。", "note": "I said... は「〜と言ったはずだ」。"},
+  {"en": "Friedkin!", "jp": "フリードキン！", "note": "部下を呼ぶ叫び。"},
+  {"en": "Friedkin! God damn it, get off of him!", "jp": "フリードキン！ くそっ、彼から離れろ！", "note": "get off of... は「〜から離れる、〜を離す」。"},
+  {"en": "You release him now, soldier. That's an order!", "jp": "今すぐ彼を解放するんだ、兵士よ。命令だ！", "note": "release は「〜を解放する」。That's an order! で「これは命令だ！」。"},
+  {"en": "Is this what you do now? You just attack people?", "jp": "今の君たちのやり方はこれかい？ ただ人を襲うだけなのかい？", "note": "Is this what you do now? は「これが今の君たちのやっていることか」。attack people で「人々を攻撃する」。"},
+  {"en": "I'm sorry, sir. I got confused.", "jp": "すみません、閣下。混乱してしまいました。", "note": "get confused は「混乱する、頭が混乱する」。"},
+  {"en": "He seems like a winner.", "jp": "頼もしい逸材（勝者）に見えるね（皮肉）。", "note": "seem like a winner は「勝者のように見える」。トッドの皮肉。"},
+  {"en": "Dirk, listen to me.", "jp": "ダーク、私の話を聞いてくれ。", "note": "listen to me は「私の話を聞け」。"},
+  {"en": "Why? Do you have new lies to tell me?", "jp": "何でだい？ 僕に吐く新しい嘘でも用意してあるのかい？", "note": "lies to tell で「伝えるべき嘘」。皮肉の問い返し。"},
+  {"en": "We need you to come back in.", "jp": "君に戻ってきてほしいんだ。", "note": "need A to do で「Aに〜してほしい」。come back in で「戻ってくる」。"},
+  {"en": "Yes, why not? It's only been 16 years.", "jp": "ええ、もちろん、何でダメなんだい？ たったの16年しか経っていないんだからね。", "note": "It's only been 16 years で「たったの16年しか経っていない（皮肉）」。"},
+  {"en": "Black Wing is under review. That's why we bailed you out when police brought you in. It's the least you can do.", "jp": "ブラック・ウィングは現在再評価審査中なんだ。だから警察に連行された時に君を保釈してやったんだ。それくらい当然の恩返しだろう。", "note": "under review は「再評価中、審査中」。bail A out は「Aを保釈する」。the least you can do で「君ができる最低限のこと（恩返し）」。"},
+  {"en": "The least I could do?", "jp": "僕ができる最低限のことだって？", "note": "言葉を反芻して怒るダーク。"},
+  {"en": "This is in your best interest.", "jp": "これが君にとって一番ためになること（利益）なんだ。", "note": "in one's best interest は「〜にとって一番ためになる、利益になる」。"},
+  {"en": "You promised them something, and you couldn't deliver.", "jp": "君たちは彼らに何かを約束し、そして果たせなかった。", "note": "promise A something で「Aに何かを約束する」。deliver は「（約束・期待などを）果たす、実行する」。"},
+  {"en": "You promised me something, and you couldn't deliver.", "jp": "君たちは僕に何かを約束し、そして果たすことができなかったんだ。", "note": "繰り返しによる感情の吐露。"},
+  {"en": "Dirk, I am not the enemy here.", "jp": "ダーク、私はここでの敵ではないんだよ。", "note": "I am not the enemy here で「私はここでの敵ではない」。"},
+  {"en": "And you're not a detective.", "jp": "そして君は探偵などではないんだ。", "note": "you're not a detective で「君は探偵ではない」。否定。"},
+  {"en": "You're going to get yourself hurt or killed if--", "jp": "このままだと自分自身を傷つけるか殺されることになるぞ、もし――", "note": "get oneself hurt or killed で「自分が怪我をするか殺される」。"},
+  {"en": "I am on a case.", "jp": "僕は事件の捜査中（担当中）なんだ！", "note": "be on a case で「事件の捜査中である」。"},
+  {"en": "I have friends, and we found clues.", "jp": "僕には友達がいて、僕らは手がかりを見つけたんだ！", "note": "find clues で「手がかりを見つける」。"},
+  {"en": "We're gonna solve a mystery, a real one.", "jp": "僕らは謎を解き明かすんだ、本物の謎をね！", "note": "solve a mystery で「謎を解く」。"},
+  {"en": "And some people think I'm a pretty good detective!", "jp": "そして僕のことをかなり優秀な探偵だと思ってくれる人たちもいるんだ！", "note": "pretty good detective で「かなり優秀な探偵」。ファラの言葉の引用。"},
+  {"en": "I'm trying to protect you. I don't know what they'll do.", "jp": "私は君を守ろうとしているんだ。彼らが何をするか分からないからね。", "note": "try to protect... で「〜を守ろうとする」。"},
+  {"en": "I don't care. I don't need you.", "jp": "知ったことか！ 君なんか必要ない！", "note": "I don't care で「気にするものか」。I don't need you で「君なんか不要だ」。"},
+  {"en": "Go back to hiding in the shadows.", "jp": "影の中に隠れる生活に戻りなよ。", "note": "go back to -ing で「〜に戻る」。hide in the shadows で「影の中に身を潜める」。"},
+  {"en": "It was the only thing you were ever good at.", "jp": "それだけが君の唯一得意だったことじゃないか。", "note": "be good at... で「〜が得意である」。the only thing... で「〜な唯一のこと」。毒のある捨て台詞。"},
+  {"en": "You want me to go get him?", "jp": "あいつを連れ戻しに行きましょうか？", "note": "want A to go get B で「AにBを取りに・連れに行かせる」。"},
+  {"en": "No.", "jp": "いや。", "note": "制止。"},
+  {"en": "Not now.", "jp": "今はいい。", "note": "Not now で「今は違う」。"},
+  {"en": "We'll try another angle.", "jp": "別の角度（アプローチ）から試そう。", "note": "try another angle で「別の角度・やり方から試す」。"},
+  {"en": "You'll get them, sir. All of them.", "jp": "あいつらを捕まえられますよ、閣下。奴ら全員をね。", "note": "get them で「奴らを捕まえる」。"},
+  {"en": "We have to.", "jp": "そうせねばならんのだ。", "note": "We have to で「そうしなければならない」。"},
+  {"en": "I'm just here right now. I'll get it going, and then I'll...", "jp": "俺は今ちょうどここにいる。準備を整えたら、それから……", "note": "get it going で「（機械や準備を）始動させる、軌道に乗せる」。"},
+  {"en": "Doesn't look like anyone else has been here since we were here.", "jp": "俺たちがここにいた時以来、誰もここに来ていないようだな。", "note": "doesn't look like... で「〜のようには見えない」。since we were here で「俺たちがここにいて以来」。"},
+  {"en": "There's a ton of bodies to clean up, but everything still works.", "jp": "片付けるべき死体が山ほどあるが、設備はまだ全部ちゃんと動くぞ。", "note": "a ton of... は口語で「大量の、山ほどの」。clean up で「片付ける、掃除する」。still works で「今でも動く・機能する」。"},
+  {"en": "Bring him here. And bring a mouse.", "jp": "あいつをここへ連れて来い。それとマウス（ハツカネズミ）も一匹持って来い。", "note": "bring A here で「Aをここへ持って来る・連れて来る」。"},
+  {"en": "...temperatures arrive after that.", "jp": "……その後に気温が上昇するでしょう。", "note": "ラジオの天気予報。"},
+  {"en": "Forty-seven for a high on Tuesday. And now for the news.", "jp": "火曜日の最高気温は47度の見込みです。続いてニュースをお伝えします。", "note": "a high on [曜日] で「〜曜日の最高気温」。And now for the news で「それではニュースです」。"},
+  {"en": "The surprising update on the body discovered at the scene of the arson in Logan Heights this morning.", "jp": "今朝ローガン・ハイツの放火現場で発見されたご遺体に関する、驚くべき続報です。", "note": "surprising update で「驚くべき最新情報・続報」。at the scene of the arson で「放火事件の現場で」。"},
+  {"en": "We now have information that the body has been identified as that of Robert Wayne Terrio,", "jp": "現在入った情報によりますと、遺体はロバート・ウェイン・テリオ氏と特定されました……", "note": "be identified as... で「〜であると特定・確認される」。that of... で「〜のそれ（遺体）」。"},
+  {"en": "Shut up.", "jp": "黙れ。", "note": "Shut up は「黙れ」。"},
+  {"en": "better known to the public as beloved 1980s rock icon Lux DuJour,", "jp": "世間には1980年代の愛すべきロック・アイコン『ラックス・デュジュール』として広く知られており……", "note": "better known as... で「〜としてより良く知られている」。rock icon は「ロック界の象徴」。"},
+  {"en": "who went missing nearly two decades ago. How DuJour came to be buried under the garage of a single-bedroom--", "jp": "彼は約20年前に失踪していました。デュジュール氏がいかにして1ベッドルームのガレージ下に埋められるに至ったのか……", "note": "go missing で「失踪する、行方不明になる」。nearly two decades ago で「約20年前」。be buried で「埋められる」。"},
+  {"en": "Shut up! Shut up!", "jp": "黙れ！ 黙れ！", "note": "激高するゴードン。"},
+  {"en": "No, no, no!", "jp": "嘘だ、嘘だ、嘘だ！", "note": "現実を受け入れられない叫び。"},
+  {"en": "Oh, no.", "jp": "ああ、なんてことだ……", "note": "絶望の呻き。"},
+  {"en": "It's not your fault. It's not your fault.", "jp": "お前のせいじゃない。お前のせいじゃないんだ。", "note": "It's not your fault は「お前のせいではない」。犬（あるいは自分）になだめる言葉。"},
+  {"en": "It's not your fault. I'm sorry.", "jp": "お前のせいじゃない。すまない。", "note": "It's not your fault. I'm sorry で「お前のせいじゃない、ごめんな」。"},
+  {"en": "Sorry.", "jp": "すまない……", "note": "ラストシーンの哀愁漂う謝罪。"}
+ ];
+
+ // ---- データマイグレーションと初期化 ----
+ const savedEvaluated = localStorage.getItem('dirkgently_3_2_evaluated');
+ const savedDates = localStorage.getItem('dirkgently_3_2_dates');
+ const savedSrs = localStorage.getItem('dirkgently_3_2_srs');
+
+ let evaluatedCards = savedEvaluated ? JSON.parse(savedEvaluated) : new Array(cardsData.length).fill(false);
+ let answerDates = savedDates ? JSON.parse(savedDates) : new Array(cardsData.length).fill(null);
+ 
+let srsData = savedSrs ? JSON.parse(savedSrs) : new Array(cardsData.length).fill(null).map(() => ({
+ interval: 0,
+ ease: 2.5,
+ repetitions: 0,
+ nextReview: null
+ }));
+
+ let currentCardIndex = 0;
+ let correctCount = evaluatedCards.filter(Boolean).length;
+ let isFront = true;
+ let currentMode = 'all'; // 'all', 'unanswered', 'review', 'incorrect'
+
+ const frontSide = document.getElementById('front-side');
+ const backSide = document.getElementById('back-side');
+ const frontEngContent = document.getElementById('front-eng-content');
+ const backEngContent = document.getElementById('back-eng-content');
+ const japContent = document.getElementById('jap-content');
+ const noteContent = document.getElementById('note-content');
+ 
+const controlsFront = document.getElementById('controls-front');
+ const controlsBack = document.getElementById('controls-back');
+ const progressText = document.getElementById('progress-text');
+ const scoreText = document.getElementById('score-text');
+ const playBtn = document.getElementById('play-audio-btn');
+ const dateBadge = document.getElementById('date-badge');
+ const srsBadge = document.getElementById('srs-badge');
+ const modeIndicator = document.getElementById('mode-indicator');
+
+ function saveProgress() {
+ localStorage.setItem('dirkgently_3_2_evaluated', JSON.stringify(evaluatedCards));
+ localStorage.setItem('dirkgently_3_2_dates', JSON.stringify(answerDates));
+ localStorage.setItem('dirkgently_3_2_srs', JSON.stringify(srsData));
+ }
+
+ // YYYY-MM-DD 形式で日付を取得（比較用）
+ function getTodayStringFormatted() {
+ const d = new Date();
+ const y = d.getFullYear();
+ const m = String(d.getMonth() + 1).padStart(2, '0');
+ const day = String(d.getDate()).padStart(2, '0');
+ return `${y}-${m}-${day}`;
+ }
+
+ // 指定日数を足した日付文字列を返す
+ function addDaysToDate(days) {
+ const d = new Date();
+ d.setDate(d.getDate() + days);
+ const y = d.getFullYear();
+ const m = String(d.getMonth() + 1).padStart(2, '0');
+ const day = String(d.getDate()).padStart(2, '0');
+ return `${y}-${m}-${day}`;
+ }
+
+ function getVisibleIndices() {
+ let indices = [];
+ const today = getTodayStringFormatted();
+ 
+for (let i = 0; i < cardsData.length; i++) {
+ if (currentMode === 'all') {
+ indices.push(i);
+ } else if (currentMode === 'unanswered') {
+ if (!answerDates[i]) indices.push(i);
+ } else if (currentMode === 'incorrect') {
+ if (answerDates[i] && !evaluatedCards[i]) indices.push(i);
+ } else if (currentMode === 'review') {
+ // 次回の復習日が設定されていて、かつ今日以前の場合
+ if (srsData[i].nextReview && srsData[i].nextReview <= today) {
+ indices.push(i);
+ }
+ }
+ }
+ return indices;
+ }
+
+ function updateUI() {
+ let indices = getVisibleIndices();
+ 
+if (indices.length === 0) {
+ frontSide.style.display = 'flex';
+ backSide.style.display = 'none';
+ controlsFront.style.display = 'none';
+ controlsBack.style.display = 'none';
+ frontEngContent.innerHTML = "<div class='empty-state'>🎉 このモードの対象カードはありません！<br>上のボタンから別のモードに切り替えてね。</div>";
+ dateBadge.style.display = 'none';
+ srsBadge.style.display = 'none';
+ playBtn.style.display = 'none';
+ progressText.textContent = `- / ${cardsData.length}`;
+ scoreText.textContent = `正解数: ${correctCount}`;
+ return;
+ }
+
+ dateBadge.style.display = 'inline-block';
+ srsBadge.style.display = 'block';
+ playBtn.style.display = 'flex';
+
+ if (!indices.includes(currentCardIndex)) {
+ currentCardIndex = indices[0];
+ }
+
+ let pos = indices.indexOf(currentCardIndex);
+ progressText.textContent = `${pos + 1} / ${indices.length} (全${cardsData.length}問)`;
+ scoreText.textContent = `正解数: ${correctCount}`;
+
+ let dateStr = answerDates[currentCardIndex];
+ dateBadge.textContent = dateStr ? `最終回答日：${dateStr}` : `最終回答日：未回答`;
+
+ let srs = srsData[currentCardIndex];
+ if (srs.nextReview) {
+ srsBadge.textContent = `次回予定日: ${srs.nextReview} (連続正解: ${srs.repetitions}回)`;
+ } else {
+ srsBadge.textContent = `まだSRSに登録されていません`;
+ }
+
+ if (isFront) {
+ frontSide.style.display = 'flex';
+ backSide.style.display = 'none';
+ controlsFront.style.display = 'flex';
+ controlsBack.style.display = 'none';
+ } else {
+ frontSide.style.display = 'none';
+ backSide.style.display = 'flex';
+ controlsFront.style.display = 'none';
+ controlsBack.style.display = 'flex';
+ }
+
+ frontEngContent.textContent = cardsData[currentCardIndex].en;
+ backEngContent.textContent = cardsData[currentCardIndex].en;
+ japContent.textContent = cardsData[currentCardIndex].jp;
+ 
+if (cardsData[currentCardIndex].note) {
+ noteContent.style.display = 'block';
+ noteContent.textContent = "💡 " + cardsData[currentCardIndex].note;
+ } else {
+ noteContent.style.display = 'none';
+ }
+ }
+
+ function flipCard() {
+ isFront = !isFront;
+ updateUI();
+ }
+
+ function returnToFront() {
+ isFront = true;
+ updateUI();
+ }
+
+ function advanceCard(forward) {
+ let indices = getVisibleIndices();
+ if (indices.length === 0) {
+ updateUI();
+ return;
+ }
+
+ let pos = indices.indexOf(currentCardIndex);
+ 
+if (pos !== -1) {
+ if (forward) {
+ currentCardIndex = indices[(pos + 1) % indices.length];
+ } else {
+ // 前へボタンのループ処理
+ currentCardIndex = indices[(pos - 1 + indices.length) % indices.length];
+ }
+ } else {
+ let nextIdx = indices.find(i => i > currentCardIndex);
+ currentCardIndex = nextIdx !== undefined ? nextIdx : indices[0];
+ }
+ 
+isFront = true;
+ updateUI();
+ }
+
+ function nextCard() { advanceCard(true); }
+ function prevCard() { advanceCard(false); }
+
+ function markCorrect() {
+ // 従来のカウント用処理
+ let wasCorrect = evaluatedCards[currentCardIndex];
+ if (!wasCorrect) {
+ correctCount++;
+ evaluatedCards[currentCardIndex] = true;
+ }
+ answerDates[currentCardIndex] = getTodayStringFormatted();
+
+ // SRS (SM-2) アルゴリズムによる「完璧！」の処理
+ let cardSrs = srsData[currentCardIndex];
+ cardSrs.repetitions += 1;
+ 
+if (cardSrs.repetitions === 1) {
+ cardSrs.interval = 1; // 初回は1日後
+ } else if (cardSrs.repetitions === 2) {
+ cardSrs.interval = 6; // 2回目は6日後
+ } else {
+ cardSrs.interval = Math.round(cardSrs.interval * cardSrs.ease);
+ }
+ cardSrs.nextReview = addDaysToDate(cardSrs.interval);
+
+ saveProgress();
+ nextCard();
+ }
+
+ function markIncorrect() {
+ // 従来のカウント用処理
+ let wasCorrect = evaluatedCards[currentCardIndex];
+ if (wasCorrect) {
+ correctCount--;
+ evaluatedCards[currentCardIndex] = false;
+ }
+ answerDates[currentCardIndex] = getTodayStringFormatted();
+
+ // SRS (SM-2) アルゴリズムによる「覚えてない」の処理
+ let cardSrs = srsData[currentCardIndex];
+ cardSrs.repetitions = 0; // 連続正解リセット
+ cardSrs.interval = 1; // 翌日に再出題
+ cardSrs.ease = Math.max(1.3, cardSrs.ease - 0.2); // 定着度（難易度係数）を下げる
+ cardSrs.nextReview = addDaysToDate(cardSrs.interval);
+
+ saveProgress();
+ nextCard();
+ }
+
+ function setMode(mode) {
+ currentMode = mode;
+ 
+const modeNames = {
+ 'all': '📁 全問',
+ 'unanswered': '🆕 未回答',
+ 'review': '📅 今日の復習',
+ 'incorrect': '🎯 未正解'
+ };
+ modeIndicator.textContent = `現在のモード：${modeNames[mode]}`;
+
+ let indices = getVisibleIndices();
+ if (indices.length > 0) {
+ currentCardIndex = indices[0];
+ }
+ isFront = true;
+ updateUI();
+ }
+
+ function jumpToUnanswered() {
+ let indices = getVisibleIndices();
+ if (indices.length === 0) return;
+
+ let targetIndex = indices.find(index => !answerDates[index]);
+
+ if (targetIndex !== undefined) {
+ currentCardIndex = targetIndex;
+ } else {
+ currentCardIndex = indices[0];
+ }
+ 
+isFront = true;
+ updateUI();
+ }
+
+ function speakText() {
+ const textToSpeak = cardsData[currentCardIndex].en;
+ window.speechSynthesis.cancel();
+ const utterance = new SpeechSynthesisUtterance(textToSpeak);
+ utterance.lang = 'en-US';
+ utterance.rate = 0.9;
+ window.speechSynthesis.speak(utterance);
+ }
+
+ playBtn.addEventListener('click', speakText);
+
+ updateUI();
+ </script>
+</body>
+</html>
